@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+<!--构造函数注入
+    <bean id="Addindex" class="com.qing.index.AddIndex">
+        <constructor-arg value="http://localhost:8983/solr"/>
+    </bean>
+-->
+<!--属性注入
+    <bean id="Addindex" class="com.qing.index.AddIndex">
+        <property name="urlString" value="http://localhost:8983/solr"/>
+    </bean>
+-->
+<!--公共属性注入
+    <bean id="beanAbstract" abstract="true">
+        <property name="urlString" value="http://localhost:8983/solr"/>
+    </bean>
+    <bean id="Addindex" class="com.qing.index.AddIndex" parent="beanAbstract">
+        <property name="fileName" value="/Users/qing/IdeaProjects/sourcefile/me1.xml"/>
+    </bean>
+    <bean id="Deleteindex" class="com.qing.index.DeleteIndex" parent="beanAbstract">
+
+    </bean>
+-->
+    <bean id="httpSolrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
+        <constructor-arg value="http://localhost:8983/solr"/>
+    </bean>
+
+    <bean id="AddIndex" class="com.qing.index.AddIndex">
+        <constructor-arg ref="httpSolrServer"/>
+    </bean>
+    <bean id="DeleteIndex" class="com.qing.index.DeleteIndex">
+        <constructor-arg ref="httpSolrServer"/>
+    </bean>
+
+</beans>

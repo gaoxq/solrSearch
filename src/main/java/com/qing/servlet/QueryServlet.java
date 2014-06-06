@@ -1,7 +1,14 @@
 package com.qing.servlet;
 
+import com.qing.service.MemCachedManager;
+import com.qing.service.QueryService;
+
 import com.qing.service.QueryServiceImpl;
 import net.sf.json.JSONObject;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +23,14 @@ import java.util.List;
  */
 public class QueryServlet extends HttpServlet{
 
+    private QueryService queryService;
+//    private MemCachedManager memCache = new MemCachedManager();
+
+    public void init() throws ServletException {
+        super.init();
+        ApplicationContext applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
+        queryService = applicationContext.getBean(QueryService.class);
+    }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException {
@@ -30,30 +45,44 @@ public class QueryServlet extends HttpServlet{
         req.setCharacterEncoding("utf-8");
         resp.setContentType("text/html;charset=utf-8");
         String query = req.getParameter("xq");
-
-        System.out.println(query);
-        List<String> results = QueryServiceImpl.searchQuery(query);
-        System.out.println(results);
         JSONObject json = new JSONObject();
-        for(int i = 0; i < results.size(); i++) {
-            json.put("type", results.get(i));
+        System.out.println("query"+query);
+//        if(memCache.get(query) != null) {
+//            json.put("type", memCache.get(query));
+//        }
+//        else
+       {
+            List<String> results = queryService.searchQuery(query);
+            System.out.println("results" + results);
 
+            for (int i = 0; i < results.size(); i++) {
+                json.put("type", results.get(i));
+
+            }
         }
-
         resp.getWriter().write(json.toString());
 
     }
 /*
-    public static void main(String[] args) {
-
-        List<String> results = QueryServiceImpl.searchQuery("Test with some GB18030 encoded characters");
-        System.out.println(results);
-        JSONObject json = new JSONObject();
-        for(int i = 0; i < results.size(); i++) {
-            json.put("type", results.get(i));
-            System.out.println(results.get(i));
+    public void test() {
+        if(memCache.get("solr") != null) {
+            System.out.println(memCache.get("hello"));
         }
+        else {
+            List<String> results = queryService.searchQuery("Test with some GB18030 encoded characters");
+            System.out.println(results);
+            JSONObject json = new JSONObject();
+            for (int i = 0; i < results.size(); i++) {
+                json.put("type", results.get(i));
+                System.out.println(results.get(i));
+            }
+        }
+
+    }
+
+    public static void main(String[] args) {
+        QueryServlet a = new QueryServlet();
+        a.test();
     }
 */
-
 }

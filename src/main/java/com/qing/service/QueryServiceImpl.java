@@ -13,18 +13,22 @@ import java.util.List;
 /**
  * Created by qing on 5/18/14.
  */
-public class QueryServiceImpl{
+
+public class QueryServiceImpl implements QueryService{
 
     public static String urlString = "http://localhost:8983/solr";
     public static SolrServer server = new HttpSolrServer(urlString);
 
 
-    public static List<String> searchQuery(String xSearch) {
+    public List<String> searchQuery(String xSearch) {
 
         List<String> resultList = new ArrayList<String>();
         SolrQuery query = new SolrQuery();
         query.setQuery(xSearch);
         query.setFields("id","name");
+
+      //  System.out.println("heiheihei");
+
         QueryResponse response = null;
         try {
             response = server.query(query);
@@ -38,5 +42,6 @@ public class QueryServiceImpl{
                 resultList.add(i, results.get(i).toString());
         }
         return resultList;
+
     }
 }

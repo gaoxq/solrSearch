@@ -1,15 +1,11 @@
 package com.qing.service;
 
-import net.rubyeye.xmemcached.GetsResponse;
 import net.rubyeye.xmemcached.MemcachedClient;
 import net.rubyeye.xmemcached.MemcachedClientBuilder;
 import net.rubyeye.xmemcached.XMemcachedClientBuilder;
 import net.rubyeye.xmemcached.command.BinaryCommandFactory;
-import net.rubyeye.xmemcached.command.TextCommandFactory;
 import net.rubyeye.xmemcached.exception.MemcachedException;
 import net.rubyeye.xmemcached.utils.AddrUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +21,7 @@ public class MemCachedManager {
     private MemcachedClient client;
     private List<String> list = new ArrayList<String>();
 
-    public MemCachedManager() throws IOException {
+    public MemCachedManager(){
 
         MemcachedClientBuilder builder = new XMemcachedClientBuilder(
                 AddrUtil.getAddresses("localhost:11211"));
@@ -47,7 +43,11 @@ public class MemCachedManager {
         builder.setConnectionPoolSize(10);
          // 使用二进制文件
         builder.setCommandFactory(new BinaryCommandFactory());
-        client = builder.build();
+        try {
+            client = builder.build();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void set(String key, String value){
@@ -110,8 +110,8 @@ public class MemCachedManager {
 
     public static void main(String[] args) throws IOException {
         MemCachedManager a = new MemCachedManager();
-        a.set("solr", "/Users/qing/IdeaProjects/sourcefile/solr.xml");
-        System.out.println(a.get("solr"));
+        a.set("hello", "/Users/qing/IdeaProjects/sourcefile/solr.xml");
+        System.out.println(a.get("hello"));
     }
 
 }
